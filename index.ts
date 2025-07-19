@@ -9,6 +9,10 @@ import Fuse from "fuse.js";
 const server = new FastMCP({
   name: "Fantasy Premier League",
   version: "0.0.1",
+  health: {
+    enabled: true,
+    path: "/healthz",
+  },
 });
 
 const elementResource: ResourceTemplate<BootstrapStatic["elements"][number]> = {
