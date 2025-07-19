@@ -73,9 +73,16 @@ server.addTool({
   },
 });
 
-server.start({
-  transportType: "httpStream",
-  httpStream: {
-    port: 5678,
-  },
-});
+server
+  .start({
+    transportType: "httpStream",
+    httpStream: {
+      port: 5678,
+    },
+  })
+  .then(() => {
+    console.log("Server started on port 5678");
+  })
+  .catch(error => {
+    console.error("Error starting server", error);
+  });
