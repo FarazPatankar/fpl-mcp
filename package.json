@@ -9,6 +9,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "fantasy-premier-league-api": "^0.3.0",
     "fastmcp": "^3.9.0",
     "zod": "^4.0.5"
   }

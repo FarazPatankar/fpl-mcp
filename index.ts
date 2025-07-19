@@ -1,5 +1,6 @@
 import { FastMCP } from "fastmcp";
 import { z } from "zod"; // Or any validation library that supports Standard Schema
+import { getBootstrapStatic } from "fantasy-premier-league-api";
 
 const server = new FastMCP({
   name: "My Server",
@@ -18,8 +19,24 @@ server.addTool({
   },
 });
 
+server.addTool({
+  name: "get_player_info",
+  description: "Get player info",
+  parameters: z.object({
+    name: z.string(),
+  }),
+  execute: async (args) => {
+    const { elements } = await getBootstrapStatic();
+    const player = elements.find((element) => element.web_name === args.name);
+    if (player == null) {
+      return "Player not found";
+    }
+
+    return player.first_name + " " + player.second_name;
+  },
+});
+
 server.start({
-  // transportType: "stdio"
   transportType: "httpStream",
   httpStream: {
     port: 5678,
