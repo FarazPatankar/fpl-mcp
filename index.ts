@@ -1,23 +1,54 @@
-import { FastMCP } from "fastmcp";
+import { FastMCP, type ResourceTemplate } from "fastmcp";
 import { z } from "zod";
-import { getBootstrapStatic } from "fantasy-premier-league-api";
+import {
+  getBootstrapStatic,
+  type BootstrapStatic,
+} from "fantasy-premier-league-api";
+import Fuse from "fuse.js";
 
 const server = new FastMCP({
-  name: "My Server",
-  version: "1.0.0",
+  name: "Fantasy Premier League",
+  version: "0.0.1",
 });
 
-server.addTool({
-  name: "add",
-  description: "Add two numbers",
-  parameters: z.object({
-    a: z.number(),
-    b: z.number(),
-  }),
-  execute: async args => {
-    return String(args.a + args.b);
+const elementResource: ResourceTemplate<BootstrapStatic["elements"][number]> = {
+  uriTemplate: "elements://element/{id}",
+  name: "element",
+  mimeType: "application/json",
+  arguments: [
+    {
+      name: "id",
+      required: true,
+    },
+  ],
+  load: async args => {
+    const { elements } = await getBootstrapStatic();
+
+    const id = Number(args.id);
+    const element = elements.find(element => element.id === id);
+
+    return {
+      text: JSON.stringify(element),
+    };
   },
-});
+};
+
+server.addResourceTemplate(elementResource);
+
+const findPlayer = async (name: string) => {
+  const { elements } = await getBootstrapStatic();
+
+  const fuse = new Fuse(elements, {
+    keys: ["web_name", "first_name", "second_name"],
+  });
+  const response = fuse.search(name);
+
+  if (response.length === 0) {
+    return null;
+  }
+
+  return response[0]?.item;
+};
 
 server.addTool({
   name: "get_player_info",
@@ -26,13 +57,19 @@ server.addTool({
     name: z.string(),
   }),
   execute: async args => {
-    const { elements } = await getBootstrapStatic();
-    const player = elements.find(element => element.web_name === args.name);
+    const player = await findPlayer(args.name);
     if (player == null) {
       return "Player not found";
     }
 
-    return player.first_name + " " + player.second_name;
+    return {
+      content: [
+        {
+          type: "resource",
+          resource: await server.embedded(`elements://element/${player.id}`),
+        },
+      ],
+    };
   },
 });
 
