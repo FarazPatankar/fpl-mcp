@@ -2,16 +2,23 @@
   "name": "fpl-mcp",
   "module": "index.ts",
   "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest"
+  "scripts": {
+    "dev": "bun --watch index.ts",
+    "format:check": "prettier --check .",
+    "start": "bun index.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
   },
-  "peerDependencies": {
-    "typescript": "^5"
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "@types/bun": "latest",
+    "prettier": "3.6.2",
+    "typescript": "5.8.3"
   },
   "dependencies": {
-    "fantasy-premier-league-api": "^0.3.0",
-    "fastmcp": "^3.9.0",
-    "fuse.js": "^7.1.0",
-    "zod": "^4.0.5"
+    "fantasy-premier-league-api": "0.6.0",
+    "fastmcp": "4.16.8",
+    "fuse.js": "7.1.0",
+    "zod": "4.1.13"
   }
 }
