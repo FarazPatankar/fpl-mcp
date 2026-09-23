@@ -11,6 +11,7 @@ import {
   isTracingSuppressed,
   W3CTraceContextPropagator,
 } from "@opentelemetry/core";
+import { resourceFromAttributes } from "@opentelemetry/resources";
 import { NodeSDK } from "@opentelemetry/sdk-node";
 import { Server, type IncomingMessage, type ServerResponse } from "node:http";
 
@@ -18,6 +19,12 @@ import { Server, type IncomingMessage, type ServerResponse } from "node:http";
 // node:http boundary used by FastMCP and Bun's native fetch explicitly instead.
 // Exporter, protocol, credentials, identity and sampling come from OTEL_* only.
 const sdk = new NodeSDK({
+  // envDetector retains precedence for OTEL_RESOURCE_ATTRIBUTES / OTEL_SERVICE_NAME.
+  resource: process.env.OTEL_SERVICE_VERSION
+    ? resourceFromAttributes({
+        "service.version": process.env.OTEL_SERVICE_VERSION,
+      })
+    : undefined,
   contextManager: new AsyncLocalStorageContextManager(),
   textMapPropagator: new W3CTraceContextPropagator(),
 });

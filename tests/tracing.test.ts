@@ -59,8 +59,8 @@ for (const protocol of ["http/json", "http/protobuf"]) {
         OTEL_EXPORTER_OTLP_ENDPOINT: collector.url.origin,
         OTEL_EXPORTER_OTLP_PROTOCOL: protocol,
         OTEL_SERVICE_NAME: "local-fpl-smoke",
-        OTEL_RESOURCE_ATTRIBUTES:
-          "service.name=lower-priority,service.version=smoke-version",
+        OTEL_RESOURCE_ATTRIBUTES: "service.name=lower-priority",
+        OTEL_SERVICE_VERSION: "smoke-version",
         OTEL_EXPORTER_OTLP_HEADERS: "test-auth=local-only",
         OTEL_METRICS_EXPORTER: "none",
         OTEL_LOGS_EXPORTER: "none",
