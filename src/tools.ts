@@ -1,6 +1,13 @@
 import type { Fixture } from "fantasy-premier-league-api";
-import type { FastMCP } from "fastmcp";
+import type {
+  FastMCP,
+  FastMCPSessionAuth,
+  Tool,
+  ToolParameters,
+} from "fastmcp";
 import { z } from "zod";
+
+import { tracedTool } from "./traced-tool.js";
 
 import {
   findPlayer,
@@ -89,7 +96,11 @@ const isFixtureComplete = (fixture: Fixture) =>
   fixture.finished || fixture.finished_provisional;
 
 export const registerTools = (server: FastMCP) => {
-  server.addTool({
+  const addTool = <Params extends ToolParameters>(
+    tool: Tool<FastMCPSessionAuth, Params>,
+  ) => server.addTool(tracedTool(tool));
+
+  addTool({
     name: "get_player_info",
     description:
       "Find one FPL player by a natural name or partial name and return comprehensive details: price, points, form, ownership, expected stats, availability, set-piece order, DEFCON data, price-change projections, and upcoming fixtures. Use this for questions about a specific player.",
@@ -125,7 +136,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "search_players",
     description:
       "Search, filter, rank, and shortlist FPL players. Handles natural requests such as 'best midfielders under 7.5m', 'in-form Arsenal defenders', 'highest-owned forwards', 'top DEFCON players', or a fuzzy player-name search.",
@@ -230,7 +241,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "compare_players",
     description:
       "Compare two to six named FPL players side-by-side across price, points, form, ownership, expected stats, DEFCON, transfers, availability, and price-change signals.",
@@ -268,7 +279,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "list_teams",
     description:
       "List all current Premier League clubs with IDs, short codes, table information, and FPL strength ratings. Use when the user asks which teams are available or needs club codes.",
@@ -289,7 +300,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "get_team_info",
     description:
       "Find a club by natural name or short code and return its team details, upcoming fixtures with FDR, and leading FPL players. Use for broad questions about a specific club.",
@@ -332,7 +343,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "get_team_fixtures",
     description:
       "Return fixtures or results for one club, including gameweek, kickoff, home/away, opponent, score, status, and FPL fixture difficulty. Use for natural questions about schedules, runs, results, or fixture difficulty.",
@@ -373,7 +384,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "get_gameweek_overview",
     description:
       "Return one gameweek's status, deadline, headline statistics, and every fixture. Defaults to the current gameweek, or the next gameweek when there is no current one.",
@@ -396,7 +407,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "get_fixture_player_stats",
     description:
       "Return named player contributions from live or completed fixtures: goals, assists, cards, saves, bonus, BPS, and DEFCON. Filter by gameweek and/or club. Use for questions such as 'who scored?', 'who got bonus?', or 'what happened in the Arsenal match?'.",
@@ -462,7 +473,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "get_gameweek_deadline",
     description:
       "Get the official deadline for a specific, current, or next FPL gameweek. Returns ISO time and Unix epoch so the caller can convert it to any requested timezone.",
@@ -485,7 +496,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "get_price_changes",
     description:
       "Return official FPL price-change progress and projections. Handles natural questions about likely risers, likely fallers, locked prices, tonight's changes, or multi-day projections.",
@@ -569,7 +580,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "get_defcon_status",
     description:
       "Return defensive-contribution (DEFCON) progress from gameweek fixture stats. Defenders reach DEFCON at 10 and are close from 8; midfielders reach it at 12 and are close from 10. Defaults to close/reached players in the current gameweek.",
@@ -649,7 +660,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "get_transfer_trends",
     description:
       "Return the most transferred-in, transferred-out, or net-transferred FPL players for the current gameweek. Use for popularity and market-movement questions.",
@@ -684,7 +695,7 @@ export const registerTools = (server: FastMCP) => {
     },
   });
 
-  server.addTool({
+  addTool({
     name: "get_set_piece_takers",
     description:
       "Return penalty, direct-free-kick, and corner/indirect-free-kick order for players, optionally limited to one club. Use for set-piece taker questions.",
