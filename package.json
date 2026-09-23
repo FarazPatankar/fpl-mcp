@@ -19,6 +19,11 @@
     "typescript": "5.8.3"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/context-async-hooks": "^2.11.0",
+    "@opentelemetry/core": "^2.11.0",
+    "@opentelemetry/resources": "^2.11.0",
+    "@opentelemetry/sdk-node": "^0.222.0",
     "fantasy-premier-league-api": "0.6.0",
     "fastmcp": "4.16.8",
     "fuse.js": "7.1.0",
